@@ -27,6 +27,136 @@
             overflow: hidden;
         }
 
+        .nav-menu {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px;
+            color: #764ba2;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            transition: transform 0.3s ease;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+            margin: 0;
+            padding: 0;
+        }
+
+        .nav-links li {
+            position: relative;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 500;
+            padding: 12px 20px;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            height: 44px;
+            min-width: 120px;
+            text-align: center;
+            color: #764ba2;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-links a:hover::before {
+            left: 100%;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .nav-links a.active {
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+            position: relative;
+            width: 40px;
+            height: 40px;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .hamburger-line {
+            width: 25px;
+            height: 3px;
+            background: white;
+            margin: 3px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(9px, 9px);
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             padding: 40px;
@@ -265,11 +395,107 @@
             .age-buttons {
                 flex-direction: column;
             }
+
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: linear-gradient(135deg, rgba(70, 172, 254, 0.95) 0%, rgba(0, 242, 254, 0.95) 100%);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                padding: 80px 30px 30px;
+                gap: 20px;
+                transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                box-shadow: -10px 0 30px rgba(0, 0, 0, 0.3);
+                z-index: 1000;
+            }
+
+            .nav-links.show {
+                display: flex;
+                right: 0;
+            }
+
+            .nav-links a {
+                width: 100%;
+                padding: 15px 20px;
+                margin: 5px 0;
+                border-radius: 15px;
+                text-align: left;
+                font-size: 1.1em;
+                border: 2px solid transparent;
+                background: rgba(255, 255, 255, 0.1);
+                height: auto;
+                min-width: auto;
+            }
+
+            .nav-links a:hover,
+            .nav-links a.active {
+                background: rgba(255, 255, 255, 0.2);
+                border-color: rgba(255, 255, 255, 0.3);
+                transform: translateX(5px);
+            }
+
+            .mobile-menu-btn {
+                display: flex !important;
+                z-index: 1001;
+            }
+
+            .nav-container {
+                position: relative;
+            }
+        }
+
+        /* Overlay для затемнения фона */
+        .mobile-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .mobile-overlay.show {
+            display: block;
+            opacity: 1;
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Overlay для мобильного меню -->
+        <div class="mobile-overlay" id="mobileOverlay" onclick="closeMobileMenu()"></div>
+        
+        <nav class="nav-menu">
+            <div class="nav-container">
+                <a href="#" class="logo">
+                    Ольга Бирюкова
+                </a>
+                
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="/">Тест для взрослых</a></li>
+                    <li><a class="active">Тест для детей</a></li>
+                </ul>
+                
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()" id="mobileMenuBtn">
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                    <div class="hamburger-line"></div>
+                </button>
+            </div>
+        </nav>
+
         <div class="header">
             <h1>Тест на определение темперамента ребенка</h1>
             <p>Основано на научных методиках Томаса-Чесс и Ротбарт</p>
@@ -808,6 +1034,55 @@
         // Инициализация
         document.querySelectorAll('.age-btn').forEach(btn => {
             btn.addEventListener('click', () => selectAge(btn.dataset.age));
+        });
+
+        // Функции навигации
+        function toggleMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            navLinks.classList.toggle('show');
+            mobileOverlay.classList.toggle('show');
+            mobileMenuBtn.classList.toggle('active');
+            
+            // Предотвращаем прокрутку страницы когда меню открыто
+            if (navLinks.classList.contains('show')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const mobileOverlay = document.getElementById('mobileOverlay');
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            
+            navLinks.classList.remove('show');
+            mobileOverlay.classList.remove('show');
+            mobileMenuBtn.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function showPage(page) {
+            // Убираем активный класс со всех ссылок
+            document.querySelectorAll('.nav-links a').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Добавляем активный класс к выбранной ссылке
+            event.target.classList.add('active');
+            
+            // Закрываем мобильное меню
+            closeMobileMenu();
+        }
+
+        // Закрытие мобильного меню при изменении размера экрана
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
         });
     </script>
 </body>
