@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест на определение темперамента ребенка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .age-selection {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .age-selection h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .age-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .age-btn {
+            padding: 10px 20px;
+            border: 2px solid #4facfe;
+            background: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .age-btn:hover {
+            background: #4facfe;
+            color: white;
+        }
+
+        .age-btn.active {
+            background: #4facfe;
+            color: white;
+        }
+
+        .question-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .question-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .question p {
+            margin-bottom: 15px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .options {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .option {
+            padding: 8px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9em;
+            background: white;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            margin-top: 20px;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .calculate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .results {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            border-radius: 15px;
+            display: none;
+        }
+
+        .results h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .temperament-type {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .temperament-type h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .characteristics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .characteristic {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .characteristic h5 {
+            color: #333;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+
+        .characteristic p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4facfe, #667eea);
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .temperament-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            border-radius: 5px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .options {
+                flex-direction: column;
+            }
+            
+            .age-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Тест на определение темперамента ребенка</h1>
+            <p>Основано на научных методиках Томаса-Чесс и Ротбарт</p>
+        </div>
+
+        <div class="content">
+            <div class="age-selection">
+                <h3>Выберите возраст вашего ребенка:</h3>
+                <div class="age-buttons">
+                    <button class="age-btn" data-age="infant">3-11 месяцев</button>
+                    <button class="age-btn" data-age="toddler">1-2 года</button>
+                    <button class="age-btn" data-age="preschool">3-5 лет</button>
+                    <button class="age-btn" data-age="school">6-12 лет</button>
+                    <button class="age-btn" data-age="teen">13-17 лет</button>
+                </div>
+            </div>
+
+            <div id="test-questions"></div>
+
+            <button class="calculate-btn" onclick="calculateResults()" disabled>Получить результаты</button>
+
+            <div class="results" id="results"></div>
+
+            <div class="disclaimer">
+                <strong>Важное примечание:</strong> Этот тест носит информационный характер и не заменяет профессиональную психологическую консультацию. Результаты помогают лучше понять особенности вашего ребенка, но не являются диагнозом.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedAge = null;
+        let answers = {};
+
+        const questions = {
+            activity: {
+                title: "Уровень активности",
+                questions: [
+                    {
+                        text: "Как часто ваш ребенок проявляет физическую активность?",
+                        options: [
+                            {text: "Очень активен постоянно", value: 5},
+                            {text: "Активен большую часть времени", value: 4},
+                            {text: "Умеренно активен", value: 3},
+                            {text: "Малоактивен", value: 2},
+                            {text: "Предпочитает спокойные занятия", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как ваш ребенок ведет себя в новой обстановке?",
+                        options: [
+                            {text: "Сразу исследует всё вокруг", value: 5},
+                            {text: "Активно, но с некоторой осторожностью", value: 4},
+                            {text: "Сначала наблюдает, потом действует", value: 3},
+                            {text: "Долго привыкает", value: 2},
+                            {text: "Избегает новых ситуаций", value: 1}
+                        ]
+                    }
+                ]
+            },
+            regularity: {
+                title: "Регулярность (ритмичность)",
+                questions: [
+                    {
+                        text: "Насколько предсказуемы потребности ребенка в еде и сне?",
+                        options: [
+                            {text: "Очень регулярные", value: 5},
+                            {text: "Обычно регулярные", value: 4},
+                            {text: "Умеренно регулярные", value: 3},
+                            {text: "Часто непредсказуемые", value: 2},
+                            {text: "Совершенно непредсказуемые", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как ребенок реагирует на изменения в распорядке дня?",
+                        options: [
+                            {text: "Легко адаптируется", value: 1},
+                            {text: "Адаптируется с небольшими трудностями", value: 2},
+                            {text: "Требует времени для адаптации", value: 3},
+                            {text: "Тяжело переносит изменения", value: 4},
+                            {text: "Очень болезненно реагирует", value: 5}
+                        ]
+                    }
+                ]
+            },
+            approach: {
+                title: "Реакция на новое",
+                questions: [
+                    {
+                        text: "Как ребенок реагирует на новых людей?",
+                        options: [
+                            {text: "Легко идет на контакт", value: 5},
+                            {text: "Дружелюбно, но осторожно", value: 4},
+                            {text: "Нейтрально", value: 3},
+                            {text: "Настороженно", value: 2},
+                            {text: "Избегает контакта", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как ребенок пробует новую еду?",
+                        options: [
+                            {text: "С удовольствием", value: 5},
+                            {text: "Охотно пробует", value: 4},
+                            {text: "Пробует после уговоров", value: 3},
+                            {text: "Отказывается сначала", value: 2},
+                            {text: "Категорически отказывается", value: 1}
+                        ]
+                    }
+                ]
+            },
+            adaptability: {
+                title: "Адаптивность",
+                questions: [
+                    {
+                        text: "Как быстро ребенок привыкает к новым условиям?",
+                        options: [
+                            {text: "Очень быстро", value: 5},
+                            {text: "Достаточно быстро", value: 4},
+                            {text: "Средне", value: 3},
+                            {text: "Медленно", value: 2},
+                            {text: "Очень медленно", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как ребенок реагирует на прерывание любимых занятий?",
+                        options: [
+                            {text: "Легко переключается", value: 5},
+                            {text: "Переключается без особых проблем", value: 4},
+                            {text: "Требует времени", value: 3},
+                            {text: "Расстраивается", value: 2},
+                            {text: "Очень тяжело переносит", value: 1}
+                        ]
+                    }
+                ]
+            },
+            intensity: {
+                title: "Интенсивность реакций",
+                questions: [
+                    {
+                        text: "Насколько ярко ребенок выражает свои эмоции?",
+                        options: [
+                            {text: "Очень ярко и громко", value: 5},
+                            {text: "Ярко выражает", value: 4},
+                            {text: "Умеренно", value: 3},
+                            {text: "Спокойно", value: 2},
+                            {text: "Очень сдержанно", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как ребенок реагирует на неудачи?",
+                        options: [
+                            {text: "Бурно протестует", value: 5},
+                            {text: "Выражает недовольство", value: 4},
+                            {text: "Умеренно расстраивается", value: 3},
+                            {text: "Спокойно принимает", value: 2},
+                            {text: "Почти не реагирует", value: 1}
+                        ]
+                    }
+                ]
+            },
+            sensitivity: {
+                title: "Чувствительность",
+                questions: [
+                    {
+                        text: "Как ребенок реагирует на громкие звуки?",
+                        options: [
+                            {text: "Очень чувствителен", value: 5},
+                            {text: "Чувствителен", value: 4},
+                            {text: "Умеренно реагирует", value: 3},
+                            {text: "Малочувствителен", value: 2},
+                            {text: "Практически не реагирует", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Замечает ли ребенок мелкие изменения в окружающей среде?",
+                        options: [
+                            {text: "Замечает всё", value: 5},
+                            {text: "Замечает многое", value: 4},
+                            {text: "Замечает основное", value: 3},
+                            {text: "Замечает мало", value: 2},
+                            {text: "Почти ничего не замечает", value: 1}
+                        ]
+                    }
+                ]
+            },
+            mood: {
+                title: "Настроение",
+                questions: [
+                    {
+                        text: "Какое настроение преобладает у ребенка?",
+                        options: [
+                            {text: "Очень позитивное", value: 5},
+                            {text: "Позитивное", value: 4},
+                            {text: "Нейтральное", value: 3},
+                            {text: "Часто грустное", value: 2},
+                            {text: "Преобладает негативное", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как быстро ребенок успокаивается после расстройства?",
+                        options: [
+                            {text: "Очень быстро", value: 5},
+                            {text: "Достаточно быстро", value: 4},
+                            {text: "Средне", value: 3},
+                            {text: "Медленно", value: 2},
+                            {text: "Очень медленно", value: 1}
+                        ]
+                    }
+                ]
+            },
+            distractibility: {
+                title: "Отвлекаемость",
+                questions: [
+                    {
+                        text: "Насколько легко отвлечь ребенка от текущего занятия?",
+                        options: [
+                            {text: "Очень легко", value: 5},
+                            {text: "Легко", value: 4},
+                            {text: "Умеренно", value: 3},
+                            {text: "Трудно", value: 2},
+                            {text: "Очень трудно", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Может ли ребенок сосредоточиться в шумной обстановке?",
+                        options: [
+                            {text: "Совершенно не может", value: 5},
+                            {text: "С большим трудом", value: 4},
+                            {text: "Частично может", value: 3},
+                            {text: "Довольно хорошо", value: 2},
+                            {text: "Отлично справляется", value: 1}
+                        ]
+                    }
+                ]
+            },
+            persistence: {
+                title: "Настойчивость",
+                questions: [
+                    {
+                        text: "Как долго ребенок может заниматься одним делом?",
+                        options: [
+                            {text: "Очень долго", value: 5},
+                            {text: "Долго", value: 4},
+                            {text: "Умеренно", value: 3},
+                            {text: "Недолго", value: 2},
+                            {text: "Очень недолго", value: 1}
+                        ]
+                    },
+                    {
+                        text: "Как ребенок реагирует на трудности в выполнении задач?",
+                        options: [
+                            {text: "Упорно продолжает", value: 5},
+                            {text: "Старается справиться", value: 4},
+                            {text: "Пытается недолго", value: 3},
+                            {text: "Быстро сдается", value: 2},
+                            {text: "Сразу отказывается", value: 1}
+                        ]
+                    }
+                ]
+            }
+        };
+
+        function selectAge(age) {
+            selectedAge = age;
+            document.querySelectorAll('.age-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-age="${age}"]`).classList.add('active');
+            generateQuestions();
+        }
+
+        function generateQuestions() {
+            const questionsContainer = document.getElementById('test-questions');
+            questionsContainer.innerHTML = '';
+            
+            Object.keys(questions).forEach(category => {
+                const section = document.createElement('div');
+                section.className = 'question-section';
+                section.innerHTML = `<h3>${questions[category].title}</h3>`;
+                
+                questions[category].questions.forEach((q, index) => {
+                    const questionDiv = document.createElement('div');
+                    questionDiv.className = 'question';
+                    
+                    const questionId = `${category}_${index}`;
+                    questionDiv.innerHTML = `
+                        <p>${q.text}</p>
+                        <div class="options">
+                            ${q.options.map((option, optIndex) => `
+                                <span class="option" onclick="selectOption('${questionId}', ${option.value}, this)">
+                                    ${option.text}
+                                </span>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                    section.appendChild(questionDiv);
+                });
+                
+                questionsContainer.appendChild(section);
+            });
+            
+            document.querySelector('.calculate-btn').disabled = false;
+        }
+
+        function selectOption(questionId, value, element) {
+            answers[questionId] = value;
+            
+            const options = element.parentElement.querySelectorAll('.option');
+            options.forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function calculateResults() {
+            const totalQuestions = Object.keys(questions).reduce((sum, category) => 
+                sum + questions[category].questions.length, 0);
+            
+            if (Object.keys(answers).length < totalQuestions) {
+                alert('Пожалуйста, ответьте на все вопросы');
+                return;
+            }
+
+            const scores = {};
+            Object.keys(questions).forEach(category => {
+                scores[category] = 0;
+                questions[category].questions.forEach((q, index) => {
+                    const questionId = `${category}_${index}`;
+                    scores[category] += answers[questionId] || 0;
+                });
+                scores[category] = scores[category] / questions[category].questions.length;
+            });
+
+            const temperamentPercentages = calculateTemperamentPercentages(scores);
+            displayResults(scores, temperamentPercentages);
+        }
+
+        function calculateTemperamentPercentages(scores) {
+            // Расчет процентов для каждого темперамента
+            const cholericScore = (
+                scores.activity * 0.25 +
+                scores.intensity * 0.25 +
+                scores.approach * 0.2 +
+                scores.adaptability * 0.15 +
+                (6 - scores.regularity) * 0.15  // инвертируем для холерика
+            );
+
+            const sanguineScore = (
+                scores.mood * 0.25 +
+                scores.approach * 0.25 +
+                scores.adaptability * 0.2 +
+                scores.activity * 0.15 +
+                (6 - scores.sensitivity) * 0.15  // инвертируем для сангвиника
+            );
+
+            const phlegmaticScore = (
+                scores.regularity * 0.25 +
+                scores.persistence * 0.25 +
+                (6 - scores.intensity) * 0.2 +  // инвертируем для флегматика
+                (6 - scores.activity) * 0.15 +  // инвертируем для флегматика
+                (6 - scores.distractibility) * 0.15  // инвертируем для флегматика
+            );
+
+            const melancholicScore = (
+                scores.sensitivity * 0.25 +
+                (6 - scores.mood) * 0.25 +  // инвертируем для меланхолика
+                (6 - scores.approach) * 0.2 +  // инвертируем для меланхолика
+                scores.intensity * 0.15 +
+                (6 - scores.adaptability) * 0.15  // инвертируем для меланхолика
+            );
+
+            // Нормализация до 100%
+            const totalScore = cholericScore + sanguineScore + phlegmaticScore + melancholicScore;
+            
+            return {
+                choleric: Math.round((cholericScore / totalScore) * 100),
+                sanguine: Math.round((sanguineScore / totalScore) * 100),
+                phlegmatic: Math.round((phlegmaticScore / totalScore) * 100),
+                melancholic: Math.round((melancholicScore / totalScore) * 100)
+            };
+        }
+
+        function getDominantTemperament(percentages) {
+            const maxPercentage = Math.max(percentages.choleric, percentages.sanguine, percentages.phlegmatic, percentages.melancholic);
+            
+            if (percentages.choleric === maxPercentage) {
+                return {
+                    name: "Холерик",
+                    description: "Энергичный, активный, быстро реагирующий ребенок. Легко возбуждается, импульсивен, стремится к лидерству. Быстро адаптируется к новым ситуациям, но может быть нетерпеливым.",
+                    recommendations: [
+                        "Направляйте энергию в конструктивное русло",
+                        "Учите контролировать импульсивность",
+                        "Предоставляйте возможности для лидерства",
+                        "Помогайте развивать терпение",
+                        "Создавайте условия для физической активности"
+                    ]
+                };
+            } else if (percentages.sanguine === maxPercentage) {
+                return {
+                    name: "Сангвиник",
+                    description: "Жизнерадостный, общительный, оптимистичный ребенок. Легко приспосабливается к новым условиям, быстро переключается между занятиями. Эмоционально устойчив и активен.",
+                    recommendations: [
+                        "Поддерживайте разнообразие в деятельности",
+                        "Помогайте развивать постоянство и усидчивость",
+                        "Поощряйте социальные контакты",
+                        "Создавайте яркую, стимулирующую среду",
+                        "Учите доводить дела до конца"
+                    ]
+                };
+            } else if (percentages.phlegmatic === maxPercentage) {
+                return {
+                    name: "Флегматик",
+                    description: "Спокойный, уравновешенный, медлительный ребенок. Предпочитает стабильность, не любит резких изменений. Настойчив в достижении целей, надежен, но может быть инертным.",
+                    recommendations: [
+                        "Не торопите и не давите",
+                        "Создавайте стабильную, предсказуемую среду",
+                        "Поощряйте постепенное освоение нового",
+                        "Цените основательность и надежность",
+                        "Мягко стимулируйте к активности"
+                    ]
+                };
+            } else {
+                return {
+                    name: "Меланхолик",
+                    description: "Чувствительный, эмоциональный, ранимый ребенок. Тонко воспринимает окружающий мир, склонен к глубоким переживаниям. Осторожен в новых ситуациях, нуждается в поддержке.",
+                    recommendations: [
+                        "Создавайте спокойную, поддерживающую атмосферу",
+                        "Избегайте резкой критики",
+                        "Поощряйте творческие способности",
+                        "Помогайте преодолевать страхи и тревоги",
+                        "Развивайте уверенность в себе"
+                    ]
+                };
+            }
+        }
+
+        function displayResults(scores, temperamentPercentages) {
+            const resultsDiv = document.getElementById('results');
+            
+            const dominantTemperament = getDominantTemperament(temperamentPercentages);
+            
+            resultsDiv.innerHTML = `
+                <h3>Результаты анализа темперамента</h3>
+                
+                <div class="temperament-percentages" style="margin-bottom: 30px;">
+                    <h4>Процентное соотношение типов темперамента:</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div class="temperament-bar">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: bold; color: #e74c3c;">🔥 Холерик</span>
+                                <span style="font-weight: bold;">${temperamentPercentages.choleric}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${temperamentPercentages.choleric}%; background: linear-gradient(90deg, #e74c3c, #c0392b);"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="temperament-bar">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: bold; color: #f39c12;">☀️ Сангвиник</span>
+                                <span style="font-weight: bold;">${temperamentPercentages.sanguine}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${temperamentPercentages.sanguine}%; background: linear-gradient(90deg, #f39c12, #e67e22);"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="temperament-bar">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: bold; color: #3498db;">🌊 Флегматик</span>
+                                <span style="font-weight: bold;">${temperamentPercentages.phlegmatic}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${temperamentPercentages.phlegmatic}%; background: linear-gradient(90deg, #3498db, #2980b9);"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="temperament-bar">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <span style="font-weight: bold; color: #9b59b6;">🍃 Меланхолик</span>
+                                <span style="font-weight: bold;">${temperamentPercentages.melancholic}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${temperamentPercentages.melancholic}%; background: linear-gradient(90deg, #9b59b6, #8e44ad);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="temperament-type">
+                    <h4>Преобладающий тип: ${dominantTemperament.name}</h4>
+                    <p>${dominantTemperament.description}</p>
+                </div>
+                
+                <div class="characteristics">
+                    ${Object.keys(scores).map(category => `
+                        <div class="characteristic">
+                            <h5>${questions[category].title}</h5>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${scores[category] * 20}%"></div>
+                            </div>
+                            <p>${getCharacteristicDescription(category, scores[category])}</p>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div style="margin-top: 20px; padding: 20px; background: white; border-radius: 10px;">
+                    <h4>Рекомендации для взаимодействия с ${dominantTemperament.name.toLowerCase()}ом:</h4>
+                    <ul style="margin-left: 20px; line-height: 1.6;">
+                        ${dominantTemperament.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                    </ul>
+                </div>
+            `;
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        // Удаляем старую функцию getTemperamentType
+        function getTemperamentType(scores) {
+            // Эта функция больше не используется
+        }
+
+        function getCharacteristicDescription(category, score) {
+            const descriptions = {
+                activity: ["Низкая активность", "Ниже среднего", "Средняя", "Выше среднего", "Высокая активность"],
+                regularity: ["Непредсказуемый", "Нерегулярный", "Умеренный", "Регулярный", "Очень регулярный"],
+                approach: ["Избегающий", "Осторожный", "Нейтральный", "Открытый", "Очень открытый"],
+                adaptability: ["Медленная", "Ниже среднего", "Средняя", "Хорошая", "Отличная"],
+                intensity: ["Слабые реакции", "Умеренные", "Средние", "Яркие", "Очень интенсивные"],
+                sensitivity: ["Низкая", "Ниже среднего", "Средняя", "Высокая", "Очень высокая"],
+                mood: ["Негативное", "Грустное", "Нейтральное", "Позитивное", "Очень позитивное"],
+                distractibility: ["Сосредоточенный", "Малоотвлекаемый", "Средне", "Отвлекаемый", "Очень отвлекаемый"],
+                persistence: ["Низкая", "Ниже среднего", "Средняя", "Высокая", "Очень высокая"]
+            };
+            
+            const index = Math.round(score) - 1;
+            return descriptions[category][index] || "Средний уровень";
+        }
+
+        // Инициализация
+        document.querySelectorAll('.age-btn').forEach(btn => {
+            btn.addEventListener('click', () => selectAge(btn.dataset.age));
+        });
+    </script>
+</body>
+</html>
